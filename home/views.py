@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Material
 from .models import Supplier
+from .forms import SupplierForm
 
 def main(request):
     template = loader.get_template('main.html')
@@ -31,3 +32,14 @@ def testing(request):
         'fruits': ['Apple', 'Banana', 'Cheery']
     }
     return HttpResponse(template.render(context, request))
+
+def supplier_view(request):
+    if request.method == 'POST':
+        form = SupplierForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('suppliers.html')  # Replace with your success URL
+    else:
+        form = SupplierForm()
+
+    return render(request, 'suppliers.html', {'form': form})
