@@ -1,0 +1,14 @@
+{% extends "master.html" %}
+
+
+{% block title %}
+Wrong address
+{% endblock %}
+
+{% block content %}
+{% for x in fruits %}
+<h1>{{x}}</h1>
+{% endfor %}
+
+<p>In views.py you can see the test fruits variable</p>
+{% endblock %}

@@ -1,0 +1,69 @@
+
+
+{% extends "master.html" %}
+
+{% block title %}
+Suppliers Schedule
+{% endblock %}
+
+{% block content %}
+<h1>Suppliers Schedule</h1>
+
+<div class="table-container">
+    <table id="suppliersTable">
+        <thead>
+            <tr>
+                <th>Supplier</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for x in suppliers_list %}
+            <tr>
+                <td>{{ x.supplier }}</td>
+                <td>{{ x.contact }}</td>
+                <td>{{ x.email }}</td>
+                <td>{{ x.phone }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4"><button id="addBtn">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('addBtn').addEventListener('click', function() {
+        var table = document.getElementById('suppliersTable');
+        var newRow = table.insertRow(-1); // Insert a row at the end of the table
+        var fields = ['supplier', 'contact', 'email', 'phone'];
+
+        fields.forEach(function(field, index) {
+            var cell = newRow.insertCell(index);
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = field;
+            input.maxLength = 255;
+            cell.appendChild(input);
+        });
+
+        var saveCell = newRow.insertCell(fields.length);
+        var saveBtn = document.createElement('button');
+        saveBtn.innerHTML = 'Save';
+        saveBtn.onclick = function() { saveSupplier(newRow); };
+        saveCell.appendChild(saveBtn);
+
+        this.style.display = 'none'; // Hide the 'Add' button
+    });
+
+    function saveSupplier(row) {
+        // Implement AJAX request to send data to the server
+        // For simplicity, this part is not implemented here
+        alert('Implement AJAX to save data');
+    }
+</script>
+
+{% endblock %}

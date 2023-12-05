@@ -1,0 +1,148 @@
+/* styles.css */
+
+/* Reset some basic elements */
+/* ... [keep the previous reset styles here] ... */
+
+/* Body styling */
+body {
+    line-height: 1;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 0;
+    margin: 0;
+}
+
+/* Navigation Bar */
+.navbar {
+    background: linear-gradient(45deg, #A090D0, #B3E1DD);
+    height: 100vh; /* Full height */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    width: 200px; /* Set the width of the sidebar */
+    left: 0; /* Align to the left side */
+    top: 0; /* Align to the top */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    z-index: 1000; /* Ensure it stays on top of other content */
+}
+
+.navbar a {
+    display: block; /* Make the links appear below each other */
+    color: white;
+    text-align: left;
+    padding: 20px; /* Add some padding */
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Main content styling */
+.main-content {
+    margin-left: 200px; /* Same as the width of the sidebar */
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(45deg, #A090D0, #B3E1DD);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    width: calc(100% - 200px); /* Adjust width to account for navbar */
+    margin-left: 200px; /* Same as the width of the navbar */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+button, .button {
+    background: linear-gradient(45deg, #A090D0, #B3E1DD);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+button:hover, .button:hover {
+    background-color: #45a049;
+}
+
+/* Table Styles */
+
+.table-container {
+    overflow-x: auto; /* Enables horizontal scroll for smaller screens */
+}
+
+table {
+    border-collapse: collapse; /* Collapse borders */
+    width: 100%; /* Full width */
+    margin-bottom: 20px; /* Spacing below the table */
+}
+
+th, td {
+    border: 1px solid #ddd; /* Light grey border */
+    text-align: left; /* Align text to the left */
+    padding: 8px; /* Padding inside cells */
+}
+
+th {
+    background-color: #A090D0; /* Header background color */
+    color: white; /* White text for headers */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+tr:hover {
+    background-color: #ddd; /* Row hover effect */
+}
+
+/* Responsive table */
+@media screen and (max-width: 600px) {
+    table {
+        border: 0;
+    }
+
+    table thead {
+        display: none; /* Hide thead on small screens */
+    }
+
+    table, tbody, th, td, tr {
+        display: block; /* Block display for responsive layout */
+    }
+
+    table tr {
+        margin-bottom: 10px; /* Spacing between rows */
+    }
+
+    table td {
+        text-align: right; /* Align text to the right for data cells */
+        position: relative;
+        padding-left: 50%; /* Space for data labels */
+    }
+
+    table td::before {
+        content: attr(data-label); /* Data label from the attribute */
+        position: absolute;
+        left: 0;
+        width: 50%; /* Width of the label */
+        padding-left: 10px; /* Padding for the label */
+        white-space: nowrap; /* Prevent label from wrapping */
+        text-align: left; /* Align label text to the left */
+        font-weight: bold; /* Bold font for labels */
+    }
+}

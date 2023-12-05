@@ -1,0 +1,32 @@
+{% extends "master.html" %}
+
+
+{% block title %}
+Master Rates Schedule{% endblock %}
+
+{% block content %}
+<h1>Master Rates Schedule</h1>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Units</th>
+                <th>Rate</th>
+                <th>Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for x in materials_list %}
+            <tr>
+                <td>{{x.material}}</td>
+                <td>{{x.units}}</td>
+                <td>{{x.rate}}</td>
+                <td>{{x.supplier}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
