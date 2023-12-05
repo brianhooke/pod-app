@@ -28,5 +28,38 @@ Master Rates Schedule{% endblock %}
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="table-container">
+        <!-- Add Button -->
+        <button id="addRateBtn">Add New Rate</button>
+    
+        <table>
+            <!-- ... existing table structure ... -->
+        </table>
+    </div>
+    
 </div>
+
+<script>
+    document.getElementById('addRateBtn').addEventListener('click', function() {
+        var table = document.querySelector('.table-container table tbody');
+        var newRow = table.insertRow(-1); // Insert a row at the end of the table
+        var fields = ['material', 'units', 'rate', 'supplier'];
+
+        fields.forEach(function(field, index) {
+            var cell = newRow.insertCell(index);
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = field;
+            cell.appendChild(input);
+        });
+
+        var saveCell = newRow.insertCell(fields.length);
+        var saveBtn = document.createElement('button');
+        saveBtn.innerHTML = 'Save';
+        // Add onclick event to saveBtn to handle saving the new rate
+        saveCell.appendChild(saveBtn);
+    });
+</script>
+
 {% endblock %}

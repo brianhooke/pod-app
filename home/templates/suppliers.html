@@ -15,19 +15,21 @@ Suppliers Schedule
                 <th>Contact</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for x in suppliers_list %}
-            <tr>
+            <tr data-id="{{ x.id }}"> <!-- Add data-id attribute here -->
                 <td>{{ x.supplier }}</td>
                 <td>{{ x.contact }}</td>
                 <td>{{ x.email }}</td>
                 <td>{{ x.phone }}</td>
+                <td><button onclick="editRow(this)">Edit</button></td>
             </tr>
             {% endfor %}
             <tr>
-                <td colspan="4"><button id="addBtn">Add</button></td>
+                <td colspan="5"><button id="addBtn">Add</button></td>
             </tr>
         </tbody>
     </table>
@@ -36,7 +38,7 @@ Suppliers Schedule
 <script>
     document.getElementById('addBtn').addEventListener('click', function() {
         var table = document.getElementById('suppliersTable');
-        var newRow = table.insertRow(-1); // Insert a row at the end of the table
+        var newRow = table.insertRow(-1);
         var fields = ['supplier', 'contact', 'email', 'phone'];
 
         fields.forEach(function(field, index) {
@@ -54,14 +56,98 @@ Suppliers Schedule
         saveBtn.onclick = function() { saveSupplier(newRow); };
         saveCell.appendChild(saveBtn);
 
-        this.style.display = 'none'; // Hide the 'Add' button
+        this.style.display = 'none';
     });
 
-    function saveSupplier(row) {
-        // Implement AJAX request to send data to the server
-        // For simplicity, this part is not implemented here
-        alert('Implement AJAX to save data');
+    function editRow(button) {
+        var row = button.parentNode.parentNode;
+        var id = row.getAttribute('data-id');
+        var fields = ['supplier', 'contact', 'email', 'phone'];
+
+        fields.forEach(function(field, index) {
+            var cell = row.cells[index];
+            var value = cell.innerText;
+            cell.innerHTML = '';
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = field;
+            input.value = value;
+            input.maxLength = 255;
+            cell.appendChild(input);
+        });
+
+        var saveBtn = document.createElement('button');
+        saveBtn.innerHTML = 'Save';
+        saveBtn.onclick = function() { saveEditedRow(row, id); };
+        button.parentNode.replaceChild(saveBtn, button);
     }
+
+    function saveEditedRow(row, id) {
+        var supplierData = {
+            'id': id,
+            'supplier': row.cells[0].getElementsByTagName('input')[0].value,
+            'contact': row.cells[1].getElementsByTagName('input')[0].value,
+            'email': row.cells[2].getElementsByTagName('input')[0].value,
+            'phone': row.cells[3].getElementsByTagName('input')[0].value,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+
+        fetch('/update_supplier/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': supplierData.csrfmiddlewaretoken
+            },
+            body: JSON.stringify(supplierData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert('Supplier updated successfully');
+                location.reload();
+            } else {
+                alert('Error updating supplier: ' + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the supplier.');
+        });
+    }
+
+    function saveSupplier(row) {
+        var supplierData = {
+            'supplier': row.cells[0].getElementsByTagName('input')[0].value,
+            'contact': row.cells[1].getElementsByTagName('input')[0].value,
+            'email': row.cells[2].getElementsByTagName('input')[0].value,
+            'phone': row.cells[3].getElementsByTagName('input')[0].value,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+
+        fetch('/save_supplier/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': supplierData.csrfmiddlewaretoken
+            },
+            body: JSON.stringify(supplierData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert('Supplier saved successfully');
+                location.reload();  // Reload the page
+            } else {
+                alert('Error saving supplier: ' + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while saving the supplier.');
+        });
+    }
+
+
 </script>
 
 {% endblock %}
