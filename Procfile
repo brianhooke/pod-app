@@ -1,1 +1,1 @@
-web: gunicorn pod_app.wsgi
+web: gunicorn pod_app.wsgi --log-file -
