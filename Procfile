@@ -1,0 +1,1 @@
+web: gunicorn pod_app.wsgi
