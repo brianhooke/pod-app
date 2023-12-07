@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <link rel="stylesheet" href="{% static 'styles.css' %}">
+<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
 <head>
   <title>{% block title %}{% endblock %}</title>
 </head>
@@ -9,9 +10,9 @@
 
   <div class="navbar">
     <a href="/">Home</a>
+    <a href="/suppliers">Suppliers</a>
     <a href="/master_rates">Master Rates Schedule</a>
-    <a href="">Suppliers</a>
-    <a href="">BOM</a>
+    <a href="/bom">BOM</a>
     <a href="">Projects</a>
     <a href="">Stocktake</a>
 </div>
