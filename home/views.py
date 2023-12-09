@@ -154,7 +154,6 @@ def bom_view(request):
         'all_materials': all_materials  # Add this line
     })
 
-
 @require_POST
 def save_materials(request):
     try:
