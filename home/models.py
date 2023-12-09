@@ -19,7 +19,7 @@ class Supplier(models.Model):
     def __str__(self):
         return f"{self.supplier} {self.contact} {self.email} {self.phone}"
     
-    # First Table for Bom
+# First Table for Bom
 class BomProduct(models.Model):
     product_name = models.CharField(max_length=255)
 

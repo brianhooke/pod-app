@@ -1,15 +1,11 @@
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
 from django.template import loader
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from .models import Material
-from .models import Supplier
-from .models import BomProduct
-from .models import BomMaterial
+from .models import Material, Supplier, BomProduct, BomMaterial
 from .forms import SupplierForm
 import json
+
 
 def main(request):
     template = loader.get_template('main.html')
@@ -35,10 +31,6 @@ def suppliers(request):
     }
     return HttpResponse(template.render(context, request))
 
-def bom_view(request):
-    products = BomProduct.objects.all()
-    return render(request, 'bom.html', {'products': products})
-
 def testing(request):
     template = loader.get_template('template.html')
     context = {
@@ -57,8 +49,6 @@ def supplier_view(request):
 
     return render(request, 'suppliers.html', {'form': form})
 
-# require_POST
-# csrf_exempt
 def save_supplier(request):
     try:
         data = json.loads(request.body)
@@ -101,7 +91,6 @@ def delete_supplier(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
     
-@require_POST
 def update_material_rate(request):
     try:
         data = json.loads(request.body)
@@ -119,7 +108,6 @@ def update_material_rate(request):
         return JsonResponse({'status': 'error', 'message': 'Material not found.'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
-
 
 @require_POST
 def delete_material_rate(request):
@@ -152,11 +140,33 @@ def save_material_rate(request):
 
 def bom_view(request):
     products = BomProduct.objects.all()
-    product_materials = []
+    materials = Material.objects.all()
+    all_materials = Material.objects.all()
+    product_materials = {product.id: BomMaterial.objects.filter(product=product) for product in products}
 
-    for product in products:
-        # Replace the following line with your logic to get materials for a product
-        materials = Material.objects.all()  # Assuming you want to show all materials for now
-        product_materials.append((product, materials))
+    # Create a dictionary of products indexed by their IDs
+    products_dict = {product.id: product for product in products}
 
-    return render(request, 'bom.html', {'product_materials': product_materials})
+    return render(request, 'bom.html', {
+        'products_dict': products_dict,
+        'materials': materials,
+        'product_materials': product_materials,
+        'all_materials': all_materials  # Add this line
+    })
+
+
+@require_POST
+def save_materials(request):
+    try:
+        data = json.loads(request.body)
+        product_id = data['productId']
+        materials_data = data['materials']
+
+        for item in materials_data:
+            material_name = item['material']
+            quantity = item['quantity']
+            # Logic to update or create BomMaterial instances
+
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})

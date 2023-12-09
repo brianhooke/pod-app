@@ -16,20 +16,20 @@ body {
 /* Navigation Bar */
 .navbar {
     background: linear-gradient(45deg, #A090D0, #B3E1DD);
-    height: 100vh; /* Full height */
-    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-    width: 200px; /* Set the width of the sidebar */
-    left: 0; /* Align to the left side */
-    top: 0; /* Align to the top */
-    overflow-x: hidden; /* Prevent horizontal scroll */
-    z-index: 1000; /* Ensure it stays on top of other content */
+    height: 100vh;
+    position: fixed;
+    width: 200px;
+    left: 0;
+    top: 0;
+    overflow-x: hidden;
+    z-index: 1000;
 }
 
 .navbar a {
-    display: block; /* Make the links appear below each other */
+    display: block;
     color: white;
     text-align: left;
-    padding: 20px; /* Add some padding */
+    padding: 20px;
     text-decoration: none;
 }
 
@@ -40,7 +40,7 @@ body {
 
 /* Main content styling */
 .main-content {
-    margin-left: 200px; /* Same as the width of the sidebar */
+    margin-left: 200px;
     padding: 20px;
     overflow: hidden;
 }
@@ -52,8 +52,8 @@ footer {
     text-align: center;
     padding: 20px;
     position: relative;
-    width: calc(100% - 200px); /* Adjust width to account for navbar */
-    margin-left: 200px; /* Same as the width of the navbar */
+    width: calc(100% - 200px);
+    margin-left: 200px;
 }
 
 /* Headings */
@@ -63,12 +63,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Buttons */
-
-.small-btn {
-    padding: 5px 10px; /* Adjust the padding as needed */
-    font-size: 12px; /* Adjust font size as needed */
-}
-
 button, .button {
     background: linear-gradient(45deg, #A090D0, #B3E1DD);
     border: none;
@@ -87,34 +81,33 @@ button:hover, .button:hover {
 }
 
 /* Table Styles */
-
 .table-container {
-    overflow-x: auto; /* Enables horizontal scroll for smaller screens */
+    overflow-x: auto;
 }
 
 table {
-    border-collapse: collapse; /* Collapse borders */
-    width: 100%; /* Full width */
-    margin-bottom: 20px; /* Spacing below the table */
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 th, td {
-    border: 1px solid #ddd; /* Light grey border */
-    text-align: left; /* Align text to the left */
-    padding: 8px; /* Padding inside cells */
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
 }
 
 th {
-    background-color: #A090D0; /* Header background color */
-    color: white; /* White text for headers */
+    background-color: #A090D0;
+    color: white;
 }
 
 tr:nth-child(even) {
-    background-color: #f2f2f2; /* Zebra striping for rows */
+    background-color: #f2f2f2;
 }
 
 tr:hover {
-    background-color: #ddd; /* Row hover effect */
+    background-color: #ddd;
 }
 
 /* Responsive table */
@@ -124,37 +117,38 @@ tr:hover {
     }
 
     table thead {
-        display: none; /* Hide thead on small screens */
+        display: none;
     }
 
     table, tbody, th, td, tr {
-        display: block; /* Block display for responsive layout */
+        display: block;
     }
 
     table tr {
-        margin-bottom: 10px; /* Spacing between rows */
+        margin-bottom: 10px;
     }
 
     table td {
-        text-align: right; /* Align text to the right for data cells */
+        text-align: right;
         position: relative;
-        padding-left: 50%; /* Space for data labels */
+        padding-left: 50%;
     }
 
     table td::before {
-        content: attr(data-label); /* Data label from the attribute */
+        content: attr(data-label);
         position: absolute;
         left: 0;
-        width: 50%; /* Width of the label */
-        padding-left: 10px; /* Padding for the label */
-        white-space: nowrap; /* Prevent label from wrapping */
-        text-align: left; /* Align label text to the left */
-        font-weight: bold; /* Bold font for labels */
+        width: 50%;
+        padding-left: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
     }
 }
 
+/* Popup Modal Styles */
 .popupModal {
-    position: right;
+    position: fixed;
     z-index: 1;
     left: 0;
     top: 0;
@@ -166,32 +160,133 @@ tr:hover {
 
 .popupModal .modal-content {
     background-color: #fefefe;
-    margin: 15% 10%; /* Top and bottom margin */
-    padding: 200px;
-    border: 10px solid #888;
-    width: 60%; /* Adjust the width as necessary */
+    margin: 15% 10%;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-    left: 2200px; /* Adjust this value as necessary to account for the navbar */
-    position: relative; /* Ensure this is positioned relative to the containing element */
+    left: 220px;
+    position: relative;
 }
 
-/* The Close Button */
-.popupModal button {
-    color: white;
-    float: right;
-    font-size: 280px;
-    font-weight: bold;
+.modal-content h4 {
+    margin-top: 10px; /* Adjust as needed */
 }
 
-.popupModal button:hover,
-.popupModal button:focus {
-    color: black;
-    text-decoration: none;
+.modal-content table {
+    margin-top: 10px; /* Adjust as needed */
+}
+
+.material {
+    width: 65%; /* Example width */
+}
+.units {
+    width: 15%; /* Example width */
+}
+.rate {
+    width: 10%; /* Example width */
+}
+.quantity {
+    width: 10%; /* Example width */
+}
+
+/* Styles for the 'Materials Not Included' heading and dropdown */
+.materials-not-included .heading-dropdown {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #A090D0;
+    color: white;
+    padding: 10px;
+}
+
+.materials-not-included .dropdown-arrow {
+    font-size: 20px;
+}
+
+.materials-not-included .heading-dropdown.active .dropdown-arrow {
+    content: "\25BC"; /* CSS entity for a downward arrow */
+}
+.materials-not-included .dropdown-content {
+    display: none;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+}
+
+.materials-not-included table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.materials-not-included th, .materials-not-included td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.materials-not-included th {
+    background-color: #A090D0;
+    color: white;
+}
+
+.materials-not-included tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.materials-not-included tr:hover {
+    background-color: #ddd;
 }
 
 /* Button Container for modal buttons */
 .button-container {
-    text-align: right;
-    margin-top: 2000px;
+    display: flex;
+    justify-content: space-between; /* Distributes space between buttons */
+    margin-top: 20px;
+    padding: 0 10px; /* Adds padding inside the container */
+}
+
+/* Styles for number inputs to remove spinners */
+input[type="number"]::-webkit-inner-spin-button, 
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Removes spinner for Firefox */
+}
+
+/* Adjustments for the Close Button */
+.popupModal .close-btn {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    order: 1; /* Ensures that Close button comes first */
+}
+
+.popupModal .close-btn:hover,
+.popupModal .close-btn:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Adjustments for the Edit Button */
+.popupModal .edit-btn {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    order: 2; /* Ensures that Edit button comes second */
+}
+
+.popupModal .edit-btn:hover,
+.popupModal .edit-btn:focus {
+    color: black;
+    text-decoration: none;
 }

@@ -1,88 +1,72 @@
 {% extends 'master.html' %}
 
+{% load custom_filters %}
+
 {% block content %}
   <h2>Bill of Materials (BOM)</h2>
   <div>
     <h3>Products</h3>
     <ul>
-      {% for product, materials in product_materials %}
-        <li>
-          <a href="#" onclick="openPopup('{{ product.id }}'); return false;">{{ product.product_name }}</a>
 
-          <!-- Popup Modal for Each Product -->
-          <div id="popupModal-{{ product.id }}" class="popupModal" style="display:none;">
-            <div class="modal-content">
-              <h3>{{ product.product_name }}</h3>
-              <table id="table-{{ product.id }}">
-                <tr>
-                  <th>Material</th>
-                  <th>Units</th>
-                  <th>Rate</th>
-                </tr>
-                {% for material in materials %}
-                  <tr>
-                    <td>{{ material.material }}</td>
-                    <td>{{ material.units }}</td>
-                    <td>{{ material.rate }}</td>
-                  </tr>
-                {% endfor %}
-              </table>
-              <!-- Button container -->
-              <div class="button-container">
-                <button onclick="closePopup('{{ product.id }}')">Close</button>
-                <button onclick="toggleEditSave('{{ product.id }}')">Edit</button>
+      {% for product_id, materials in product_materials.items %}
+      {% with product=products_dict|get_item:product_id %}
+          <li>
+              <a href="#" onclick="openPopup('{{ product.id }}'); return false;">{{ product.product_name }}</a>
+            <!-- Popup Modal for Each Product -->
+            <div id="popupModal-{{ product.id }}" class="popupModal" style="display:none;">
+              <div class="modal-content">
+                  <h3>{{ product.product_name }}</h3>
+                  <table id="table-{{ product.id }}">
+                      <tr>
+                          <th class="material">Material</th>
+                          <th class="units">Units</th>
+                          <th class="rate">Rate</th>
+                          <th class="quantity">Quantity</th> <!-- Added Quantity header -->
+                      </tr>
+                      {% for material in materials %}
+                      <tr data-product-id="{{ product.id }}" data-material-id="{{ material.material_id }}">
+                          <td>{{ material.material }}</td>
+                          <td>{{ material.units }}</td>
+                          <td>{{ material.rate }}</td>
+                          <td class="quantity-cell"><input type="number" value="{{ material.quantity }}" style="width: 100%;"></td>
+                      </tr>
+                      {% endfor %}                      
+                  </table>
+                  <div class="button-container">
+                      <button onclick="toggleEditSave('{{ product.id }}')">Edit</button>
+                      <button onclick="closePopup('{{ product.id }}')">Close</button>
+                  </div>
+                  <h3>Materials Not Included</h3>
+                <div class="materials-not-included">
+                    <div class="heading-dropdown" onclick="toggleDropdown('{{ product.id }}', 'allMaterials')">
+                        <span class="dropdown-arrow">&#9654;</span> <!-- Dropdown arrow -->
+                    </div>
+                    <div id="dropdown-content-{{ product.id }}" class="dropdown-content" style="display:none;">
+                        <table>
+                            <tr>
+                                <th class="material">Material</th>
+                                <th class="units">Units</th>
+                                <th class="rate">Rate</th>
+                                <th class="quantity">Quantity</th>
+                            </tr>
+                            {% for material in all_materials %} <!-- Assuming all_materials is passed from your view -->
+                            <tr>
+                                <td>{{ material.material }}</td>
+                                <td>{{ material.units }}</td>
+                                <td>{{ material.rate }}</td>
+                                <td class="quantity-cell"><input type="number" style="width: 100%;"></td>
+                            </tr>
+                            {% endfor %}
+                        </table> 
+                    </div>
               </div>
-            </div>
           </div>
-        </li>
-      {% empty %}
-        <li>No products available.</li>
-      {% endfor %}
+      </li>
+  {% endwith %}
+{% empty %}
+  <li>No products available.</li>
+{% endfor %}
     </ul>
   </div>
-
-  <script>
-    function openPopup(productId) {
-        var modal = document.getElementById('popupModal-' + productId);
-        if (modal) {
-            modal.style.display = 'block';
-        }
-    }
-
-    function closePopup(productId) {
-        var modal = document.getElementById('popupModal-' + productId);
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    function toggleEditSave(productId) {
-        var table = document.getElementById('table-' + productId);
-        var btn = event.target;
-
-        if (btn.textContent === 'Edit') {
-            // Add 'Quantity' column
-            var headerRow = table.rows[0];
-            var quantityHeader = document.createElement('th');
-            quantityHeader.textContent = 'Quantity';
-            headerRow.appendChild(quantityHeader);
-
-            // Add editable text boxes for each material row
-            for (var i = 1; i < table.rows.length; i++) {
-                var cell = table.rows[i].insertCell(-1);
-                var input = document.createElement('input');
-                input.type = 'number';
-                input.style.width = '100%';
-                cell.appendChild(input);
-            }
-
-            btn.textContent = 'Save';
-        } else {
-            // Handle the save logic here
-
-            btn.textContent = 'Edit';
-        }
-    }
-  </script>
 
 {% endblock %}

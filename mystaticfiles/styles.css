@@ -169,6 +169,75 @@ tr:hover {
     position: relative;
 }
 
+.modal-content h4 {
+    margin-top: 10px; /* Adjust as needed */
+}
+
+.modal-content table {
+    margin-top: 10px; /* Adjust as needed */
+}
+
+.material {
+    width: 65%; /* Example width */
+}
+.units {
+    width: 15%; /* Example width */
+}
+.rate {
+    width: 10%; /* Example width */
+}
+.quantity {
+    width: 10%; /* Example width */
+}
+
+/* Styles for the 'Materials Not Included' heading and dropdown */
+.materials-not-included .heading-dropdown {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #A090D0;
+    color: white;
+    padding: 10px;
+}
+
+.materials-not-included .dropdown-arrow {
+    font-size: 20px;
+}
+
+.materials-not-included .heading-dropdown.active .dropdown-arrow {
+    content: "\25BC"; /* CSS entity for a downward arrow */
+}
+.materials-not-included .dropdown-content {
+    display: none;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+}
+
+.materials-not-included table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.materials-not-included th, .materials-not-included td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.materials-not-included th {
+    background-color: #A090D0;
+    color: white;
+}
+
+.materials-not-included tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.materials-not-included tr:hover {
+    background-color: #ddd;
+}
+
 /* Button Container for modal buttons */
 .button-container {
     display: flex;

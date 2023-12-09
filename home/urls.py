@@ -8,7 +8,7 @@ from .views import save_material_rate
 from .views import update_material_rate
 from .views import delete_material_rate
 from .views import bom_view
-
+from .views import save_materials
 
 urlpatterns = [
     path('', views.main, name='main'),
@@ -22,5 +22,6 @@ urlpatterns = [
     path('delete_material_rate/', views.delete_material_rate, name='delete_material_rate'),
     path('save_material_rate/', views.save_material_rate, name='save_material_rate'),   
     path('bom/', bom_view, name='bom'),
+    path('path-to-save-materials/', save_materials, name='save_materials'),
     path('supplier/', supplier_view, name='supplier-form')
 ]
