@@ -15,34 +15,34 @@ from .xero_integration import get_xero_oauth2_session, get_invoices
 def xero_callback(request):
     code = request.GET.get('code')
     if code:
-        # Exchange code for token and process as needed
-        # ...
-        return HttpResponse("Xero integration successful")
+        # Redirect to xero_data_view with the code
+        return HttpResponseRedirect(reverse('xero-data') + '?code=' + code)
     else:
         return HttpResponse("No code provided by Xero", status=400)
 
-
 def xero_data_view(request):
-    # Check if we're receiving the callback from Xero with the authorization code
     code = request.GET.get('code')
     if code:
         # Fetch the token with the authorization code
         token = fetch_xero_token(code)
-        oauth_session = OAuth2Session(CLIENT_ID, token=token)
+        if token:
+            oauth_session = OAuth2Session(CLIENT_ID, token=token)
+
+            # Fetch the invoices
+            try:
+                invoices = get_invoices(oauth_session)
+            except Exception as e:
+                return HttpResponse(f"Error fetching invoices: {e}")
+
+            # Render the response with the invoices
+            return render(request, 'xero_data.html', {'invoices': invoices})
+        else:
+            return HttpResponse("Failed to fetch token", status=400)
     else:
-        # If no code is present, start the authorization flow
+        # Start the authorization flow if no code is present
         oauth_session = get_xero_oauth2_session()
         authorization_url, state = oauth_session.authorization_url("https://login.xero.com/identity/connect/authorize")
         return HttpResponseRedirect(authorization_url)
-
-    # Fetch the invoices
-    try:
-        invoices = get_invoices(oauth_session)
-    except Exception as e:
-        return HttpResponse(f"Error fetching invoices: {e}")
-
-    # Render the response
-    return render(request, 'xero_data.html', {'invoices': invoices})
 
 def testing_view(request):
     materials = Material.objects.all()
