@@ -8,7 +8,7 @@ from .models import Material, Supplier, BomProduct, BomMaterial
 from .forms import SupplierForm
 import json
 from django.urls import reverse
-from .xero_integration import fetch_xero_token
+from .xero_integration import fetch_xero_token, CLIENT_ID
 from requests_oauthlib import OAuth2Session
 
 
