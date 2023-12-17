@@ -8,6 +8,8 @@ from .models import Material, Supplier, BomProduct, BomMaterial
 from .forms import SupplierForm
 import json
 from django.urls import reverse
+from .xero_integration import fetch_xero_token
+
 
 # Import your Xero integration functions
 from .xero_integration import get_xero_oauth2_session, get_invoices
