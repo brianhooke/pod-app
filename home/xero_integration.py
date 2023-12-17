@@ -5,11 +5,7 @@ from oauthlib.oauth2 import BackendApplicationClient
 CLIENT_ID = 'A87B79D4DBD74902B6CE91813AF3B179'
 CLIENT_SECRET = 'peagvqofmFjiYo1G1xP-0P4jJd8O2aZBZUlXsYBEHZC03i1W'
 REDIRECT_URI = 'https://pods-app-git-4779450e3d53.herokuapp.com/xero/callback'
-SCOPE = ["offline_access", "openid", "profile", "email", 
-         "accounting.transactions", "accounting.reports.read", 
-         "accounting.journals.read", "accounting.settings", 
-         "accounting.contacts", "accounting.attachments", 
-         "assets", "projects"]
+SCOPE = ["accounting.transactions"]
 
 def refresh_xero_token(refresh_token):
     extra = {
