@@ -12,6 +12,16 @@ from django.urls import reverse
 # Import your Xero integration functions
 from .xero_integration import get_xero_oauth2_session, get_invoices
 
+def xero_callback(request):
+    code = request.GET.get('code')
+    if code:
+        # Exchange code for token and process as needed
+        # ...
+        return HttpResponse("Xero integration successful")
+    else:
+        return HttpResponse("No code provided by Xero", status=400)
+
+
 def xero_data_view(request):
     # Check if we're receiving the callback from Xero with the authorization code
     code = request.GET.get('code')
