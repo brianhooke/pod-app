@@ -1,10 +1,37 @@
 from django.shortcuts import render, redirect
+from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.template import loader
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from .models import Material, Supplier, BomProduct, BomMaterial
 from .forms import SupplierForm
 import json
+
+def testing_view(request):
+    materials = Material.objects.all()
+    bom_products = BomProduct.objects.values_list('product_name', flat=True)
+    bom_materials = BomMaterial.objects.select_related('material').all()  # Preload all BomMaterial objects
+
+    context = {
+        'materials': materials,
+        'bom_products': bom_products,
+        'bom_materials': bom_materials,  # Add bom_materials to the context
+    }
+    return render(request, 'testing.html', context)
+
+@csrf_exempt  # This is for simplicity; in production, you should use CSRF tokens
+def update_bom_materials(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            for item in data:
+                bom_material = BomMaterial.objects.get(id=item['id'])
+                bom_material.quantity = item['quantity']
+                bom_material.save()
+            return JsonResponse({"status": "success"}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
 
 def main(request):
@@ -28,13 +55,6 @@ def suppliers(request):
     template = loader.get_template('suppliers.html')
     context = {
        'suppliers_list': suppliers_list,
-    }
-    return HttpResponse(template.render(context, request))
-
-def testing(request):
-    template = loader.get_template('template.html')
-    context = {
-        'fruits': ['Apple', 'Banana', 'Cheery']
     }
     return HttpResponse(template.render(context, request))
 
@@ -142,6 +162,7 @@ def bom_view(request):
     products = BomProduct.objects.all()
     materials = Material.objects.all()
     all_materials = Material.objects.all()
+    all_materials_json = serializers.serialize('json', all_materials)
     product_materials = {product.id: BomMaterial.objects.filter(product=product) for product in products}
 
     # Create a dictionary of products indexed by their IDs
@@ -150,8 +171,8 @@ def bom_view(request):
     return render(request, 'bom.html', {
         'products_dict': products_dict,
         'materials': materials,
-        'product_materials': product_materials,
-        'all_materials': all_materials  # Add this line
+        'all_materials_json': all_materials_json,
+        'product_materials': product_materials
     })
 
 @require_POST

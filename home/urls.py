@@ -14,7 +14,7 @@ urlpatterns = [
     path('', views.main, name='main'),
     path('master_rates/', views.master_rates, name='master_rates'),
     path('suppliers/', views.suppliers, name='suppliers'),
-    path('testing/', views.testing, name='testing'),
+    path('testing/', views.testing_view, name='testing'),
     path('save_supplier/', save_supplier, name='save_supplier'),
     path('update_supplier/', update_supplier, name='update_supplier'),
     path('delete_supplier/', views.delete_supplier, name='delete_supplier'),
@@ -23,5 +23,6 @@ urlpatterns = [
     path('save_material_rate/', views.save_material_rate, name='save_material_rate'),   
     path('bom/', bom_view, name='bom'),
     path('path-to-save-materials/', save_materials, name='save_materials'),
+    path('update-bom-materials/', views.update_bom_materials, name='update_bom_materials'),
     path('supplier/', supplier_view, name='supplier-form')
 ]

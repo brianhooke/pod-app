@@ -3,12 +3,17 @@
 {% load custom_filters %}
 
 {% block content %}
+<script>
+    var allMaterialsData = JSON.parse('{{ all_materials_json|safe }}');
+    console.log("All materials data:", allMaterialsData);
+</script>
+
   <h2>Bill of Materials (BOM)</h2>
   <div>
     <h3>Products</h3>
     <ul>
 
-      {% for product_id, materials in product_materials.items %}
+      {% for product_id, product_materials in product_materials.items %}
       {% with product=products_dict|get_item:product_id %}
           <li>
               <a href="#" onclick="openPopup('{{ product.id }}'); return false;">{{ product.product_name }}</a>
@@ -23,11 +28,11 @@
                           <th class="rate">Rate</th>
                           <th class="quantity">Quantity</th> <!-- Added Quantity header -->
                       </tr>
-                      {% for material in materials %}
+                      {% for product_materials in product_materials %}
                       <tr data-product-id="{{ product.id }}" data-material-id="{{ material.material_id }}">
-                          <td>{{ material.material }}</td>
-                          <td>{{ material.units }}</td>
-                          <td>{{ material.rate }}</td>
+                          <td>{{ product_materials.material }}</td>
+                          <td>{{ product_materials.units }}</td>
+                          <td>{{ product_materials.rate }}</td>
                           <td class="quantity-cell"><input type="number" value="{{ material.quantity }}" style="width: 100%;"></td>
                       </tr>
                       {% endfor %}                      
@@ -38,7 +43,7 @@
                   </div>
                   <h3>Materials Not Included</h3>
                 <div class="materials-not-included">
-                    <div class="heading-dropdown" onclick="toggleDropdown('{{ product.id }}', 'allMaterials')">
+                    <div class="heading-dropdown" onclick="toggleDropdown('{{ product.id }}', 'all_materials')">
                         <span class="dropdown-arrow">&#9654;</span> <!-- Dropdown arrow -->
                     </div>
                     <div id="dropdown-content-{{ product.id }}" class="dropdown-content" style="display:none;">
@@ -49,11 +54,11 @@
                                 <th class="rate">Rate</th>
                                 <th class="quantity">Quantity</th>
                             </tr>
-                            {% for material in all_materials %} <!-- Assuming all_materials is passed from your view -->
+                            {% for all_materials in all_materials %} 
                             <tr>
-                                <td>{{ material.material }}</td>
-                                <td>{{ material.units }}</td>
-                                <td>{{ material.rate }}</td>
+                                <td>{{ all_materials.material }}</td>
+                                <td>{{ all_materials.units }}</td>
+                                <td>{{ all_materials.rate }}</td>
                                 <td class="quantity-cell"><input type="number" style="width: 100%;"></td>
                             </tr>
                             {% endfor %}

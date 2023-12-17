@@ -29,7 +29,7 @@ class BomProduct(models.Model):
 # Second Table for Bom Material
 class BomMaterial(models.Model):
     product = models.ForeignKey(BomProduct, on_delete=models.CASCADE)
-    material = models.CharField(max_length=255)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)  # Changed this line
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):

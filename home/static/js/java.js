@@ -1,3 +1,152 @@
+// START suppliers.html form functions
+var addBtnSuppliers = document.getElementById('addBtn-suppliers');
+if (addBtnSuppliers) {
+    addBtnSuppliers.addEventListener('click', function() {
+        var table = document.getElementById('suppliersTable');
+        var newRow = table.insertRow(-1);
+        var fields = ['supplier', 'contact', 'email', 'phone'];
+
+        fields.forEach(function(field, index) {
+            var cell = newRow.insertCell(index);
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = field;
+            input.maxLength = 255;
+            cell.appendChild(input);
+        });
+
+        var saveCell = newRow.insertCell(fields.length);
+        var saveBtn = document.createElement('button');
+        saveBtn.innerHTML = 'Save';
+        saveBtn.onclick = function() { saveSupplier(newRow); };
+        saveCell.appendChild(saveBtn);
+
+        this.style.display = 'none';
+    });
+}
+
+function editRow(button) {
+  var row = button.parentNode.parentNode;
+  var id = row.getAttribute('data-id');
+  var fields = ['supplier', 'contact', 'email', 'phone'];
+
+  fields.forEach(function(field, index) {
+      var cell = row.cells[index];
+      var value = cell.innerText;
+      cell.innerHTML = '';
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.name = field;
+      input.value = value;
+      input.maxLength = 255;
+      cell.appendChild(input);
+  });
+
+  var saveBtn = document.createElement('button');
+  saveBtn.innerHTML = 'Save';
+  saveBtn.onclick = function() { saveEditedRow(row, id); };
+  button.parentNode.replaceChild(saveBtn, button);
+}
+
+function deleteRow(button) {
+  var row = button.parentNode.parentNode;
+  var id = row.getAttribute('data-id');
+
+  if (confirm('Are you sure you want to delete this supplier?')) {
+      fetch('/delete_supplier/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken') // Get CSRF token from cookies
+          },
+          body: JSON.stringify({ 'id': id })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if(data.status === 'success') {
+              alert('Supplier deleted successfully');
+              location.reload();
+          } else {
+              alert('Error deleting supplier: ' + data.message);
+          }
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the supplier.');
+      });
+  }
+}
+
+function saveEditedRow(row, id) {
+  var supplierData = {
+      'id': id,
+      'supplier': row.cells[0].getElementsByTagName('input')[0].value,
+      'contact': row.cells[1].getElementsByTagName('input')[0].value,
+      'email': row.cells[2].getElementsByTagName('input')[0].value,
+      'phone': row.cells[3].getElementsByTagName('input')[0].value,
+      'csrfmiddlewaretoken': getCookie('csrftoken') // Get CSRF token from cookies
+  };
+
+  fetch('/update_supplier/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': supplierData.csrfmiddlewaretoken
+      },
+      body: JSON.stringify(supplierData)
+  })
+  .then(response => response.json())
+  .then(data => {
+      if(data.status === 'success') {
+          alert('Supplier updated successfully');
+          location.reload();
+      } else {
+          alert('Error updating supplier: ' + data.message);
+      }
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+      alert('An error occurred while updating the supplier.');
+  });
+}
+
+function saveSupplier(row) {
+  var supplierData = {
+      'supplier': row.cells[0].getElementsByTagName('input')[0].value,
+      'contact': row.cells[1].getElementsByTagName('input')[0].value,
+      'email': row.cells[2].getElementsByTagName('input')[0].value,
+      'phone': row.cells[3].getElementsByTagName('input')[0].value,
+      'csrfmiddlewaretoken': getCookie('csrftoken') // Get CSRF token from cookies
+  };
+
+  fetch('/save_supplier/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': supplierData.csrfmiddlewaretoken
+      },
+      body: JSON.stringify(supplierData)
+  })
+  .then(response => response.json())
+  .then(data => {
+      if(data.status === 'success') {
+          alert('Supplier saved successfully');
+          location.reload();  // Reload the page
+      } else {
+          alert('Error saving supplier: ' + data.message);
+      }
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+      alert('An error occurred while saving the supplier.');
+  });
+}
+// END suppliers.html form functions
+
+
+
+
+
 function openPopup(productId) {
   var modal = document.getElementById('popupModal-' + productId);
   modal.style.display = 'block';
@@ -128,42 +277,51 @@ function getCookie(name) {// Function to get CSRF token
   return cookieValue;
 }
 
-function populateDropdownWithMaterials(dropdownContent, allMaterials) {
-  // Assuming allMaterials is a list of material objects
-  allMaterials.forEach(material => {
-      var row = dropdownContent.insertRow(-1); // Append a new row to the table
+function populateDropdownWithMaterials(dropdownContent, allMaterialsData) {
+  console.log("Populating dropdown with materials", allMaterialsData);
+  allMaterialsData.forEach(material => {
+    console.log("Adding material to dropdown:", material.fields);
+    var row = dropdownContent.insertRow(-1);
 
-      var cellMaterial = row.insertCell(0);
-      cellMaterial.innerHTML = material.material;
+    var cellMaterial = row.insertCell(0);
+    cellMaterial.innerHTML = material.fields.material;
 
-      var cellUnits = row.insertCell(1);
-      cellUnits.innerHTML = material.units;
+    var cellUnits = row.insertCell(1);
+    cellUnits.innerHTML = material.fields.units;
 
-      var cellRate = row.insertCell(2);
-      cellRate.innerHTML = material.rate;
+    var cellRate = row.insertCell(2);
+    cellRate.innerHTML = material.fields.rate;
 
-      var cellQuantity = row.insertCell(3);
-      cellQuantity.innerHTML = '<input type="number" style="width: 100%;">';
+    var cellQuantity = row.insertCell(3);
+    cellQuantity.innerHTML = '<input type="number" style="width: 100%;">';
   });
+  console.log("populateDropdown function called");
 }
 
 function toggleDropdown(productId, materialType) {
+  console.log("toggleDropdown called for productId:", productId, "and materialType:", materialType);
+
   var dropdownContent = document.getElementById('dropdown-content-' + productId).querySelector('table');
-  var dropdownHeader = document.querySelector('.heading-dropdown'); // Adjust if there are multiple dropdowns
+  var dropdownHeader = document.querySelector('.heading-dropdown');
   var dropdownArrow = dropdownHeader.querySelector('.dropdown-arrow');
+
+  console.log("Dropdown content element:", dropdownContent);
+  console.log("Dropdown header element:", dropdownHeader);
+  console.log("All materials:", allMaterialsData);
 
   dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
 
   if (dropdownContent.style.display === 'block') {
-      // Change to downward arrow when the dropdown is open
-      dropdownArrow.innerHTML = '&#9660;';
-
-      if (materialType === 'allMaterials') {
-          // Assuming allMaterials is available as a global variable or fetched here
-          populateDropdownWithMaterials(dropdownContent, allMaterials);
-      }
+    dropdownArrow.innerHTML = '&#9660;';
+    console.log("Dropdown is now open");
+    if (materialType === 'all_materials') {
+      console.log("Material type is all_materials, populating dropdown...");
+      populateDropdownWithMaterials(dropdownContent, allMaterialsData);
+    }
   } else {
-      // Change back to right arrow when the dropdown is closed
-      dropdownArrow.innerHTML = '&#9654;';
+    dropdownArrow.innerHTML = '&#9654;';
+    console.log("Dropdown is now closed");
   }
 }
+
+

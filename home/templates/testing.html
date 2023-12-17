@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing</title>
+</head>
+<body>
+
+<div class="main-content">
+
+{% for product in bom_products %}
+    <button class="test-button" onclick="openPopup('{{ product }}')" data-product-name="{{ product }}">{{ product }}</button>
+{% endfor %}
+
+<div id="popupModal" class="popupModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closePopup()">&times;</span>
+        <h2 id="productNameDisplay"></h2>
+        <table id="bomMaterialsTable">
+            <tr>
+                <th>Material</th>
+                <th>Units</th>
+                <th>Rate</th>
+                <th>Quantity</th>
+            </tr>
+            <tr>
+                <td>a1</td>
+                <td>b1</td>
+                <td>c1</td>
+                <td>d1</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+            </tr>
+        </table>
+
+        <button id="editSaveButton" onclick="toggleEditMode()">Edit</button>
+
+        <!-- Dropdown Text -->
+        <p id="dropdownText" style="cursor: pointer; color: blue; text-decoration: underline;">Dropdown</p>
+        <!-- Second Table (Initially Hidden) -->
+        <table id="secondTable" style="display: none;">
+                <tr>
+                    <th>Material</th>
+                    <th>Units</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                </tr>
+            {% for material in materials %}
+            <tr>
+                <td>{{ material.material }}</td>
+                <td>{{ material.units }}</td>
+                <td>{{ material.rate }}</td>
+                <td>X</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</div>
+
+<style>
+.popupModal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.popupModal .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* Centered vertically and horizontally */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%; /* Adjust as needed */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.popupModal .modal-content table th, .popupModal .modal-content table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.popupModal .modal-content table {
+    width: 100%;
+    table-layout: fixed; /* This ensures that columns are equally spaced */
+}
+
+.popupModal .modal-content table th {
+    background-color: #A090D0;
+    color: white;
+    /* Set a fixed width for table headers, or you can remove the width property to make it auto-adjust */
+}
+</style>
+
+<script>
+    function openPopup(productName) {
+        // Set the product name at the top of the popup
+        document.getElementById('productNameDisplay').innerText = productName;
+    
+        // Initialize displayed materials set and populate the first table
+        var displayedMaterials = new Set();
+        var bomMaterialsTable = document.getElementById('bomMaterialsTable');
+        bomMaterialsTable.innerHTML = '<tr><th>Material</th><th>Units</th><th>Rate</th><th>Quantity</th></tr>';
+    
+        {% for bom_material in bom_materials %}
+            if ("{{ bom_material.product.product_name }}" == productName) {
+                displayedMaterials.add("{{ bom_material.material.material }}");
+                var row = '<tr data-bom-material-id="{{ bom_material.id }}">' +
+                    '<td>{{ bom_material.material.material }}</td>' +
+                    '<td>{{ bom_material.material.units }}</td>' +
+                    '<td>{{ bom_material.material.rate }}</td>' +
+                    '<td>{{ bom_material.quantity }}</td>' +
+                    '</tr>';
+                bomMaterialsTable.innerHTML += row;
+            }
+        {% endfor %}
+    
+        // Populate the second table with materials not displayed in the first table
+        var secondTable = document.getElementById('secondTable');
+        secondTable.innerHTML = '<tr><th>Material</th><th>Units</th><th>Rate</th><th>Quantity</th></tr>';
+    
+        {% for material in materials %}
+            if (!displayedMaterials.has("{{ material.material }}")) {
+                var secondRow = '<tr>' +
+                    '<td>{{ material.material }}</td>' +
+                    '<td>{{ material.units }}</td>' +
+                    '<td>{{ material.rate }}</td>' +
+                    '<td>0</td>' +
+                    '</tr>';
+                secondTable.innerHTML += secondRow;
+            }
+        {% endfor %}
+    
+        // Display the popup
+        document.getElementById('popupModal').style.display = 'block';
+    }
+    
+    function toggleEditMode() {
+    var isEditMode = document.getElementById('editSaveButton').innerText === 'Edit';
+
+    // Function to toggle fields for a given table
+    var toggleFields = function(tableId) {
+        var rows = document.querySelectorAll(tableId + ' tr');
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+            var quantityCell = row.cells[3];
+            if (isEditMode) {
+                var quantityValue = quantityCell.innerText;
+                quantityCell.innerHTML = '<input type="text" value="' + quantityValue + '">';
+            } else {
+                var quantityInput = quantityCell.querySelector('input');
+                quantityCell.innerHTML = quantityInput ? quantityInput.value : quantityCell.innerText;
+            }
+        }
+    };
+
+    toggleFields('#bomMaterialsTable');
+    toggleFields('#secondTable');
+
+    if (!isEditMode) {
+        // Collect data from the tables and send to the server
+        var bomMaterialsData = [];
+        var collectTableData = function(tableId) {
+            var rows = document.querySelectorAll(tableId + ' tr');
+            for (var i = 1; i < rows.length; i++) {
+                var row = rows[i];
+                var bomMaterialId = row.getAttribute('data-bom-material-id');
+                var quantityCell = row.cells[3];
+                var quantityInput = quantityCell.querySelector('input');
+                var quantityValue = quantityInput ? quantityInput.value : quantityCell.innerText;
+
+                bomMaterialsData.push({
+                    id: bomMaterialId,
+                    quantity: quantityValue
+                });
+            }
+        };
+
+        collectTableData('#bomMaterialsTable');
+        collectTableData('#secondTable');
+
+        // Send AJAX request to update BomMaterials
+        fetch('/update-bom-materials/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bomMaterialsData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Toggle button text
+    document.getElementById('editSaveButton').innerText = isEditMode ? 'Save' : 'Edit';
+}
+
+// Event listener for the dropdown
+document.getElementById('dropdownText').addEventListener('click', function() {
+    var secondTable = document.getElementById('secondTable');
+    secondTable.style.display = secondTable.style.display === 'none' ? 'block' : 'none';
+});
+
+// Function to close the popup
+function closePopup() {
+    document.getElementById('popupModal').style.display = 'none';
+}        
+
+</script>
+    
+    
+
+</body>
+</html>
