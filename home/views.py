@@ -1,12 +1,38 @@
 from django.shortcuts import render, redirect
 from django.core import serializers
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import Material, Supplier, BomProduct, BomMaterial
 from .forms import SupplierForm
 import json
+from django.urls import reverse
+
+# Import your Xero integration functions
+from .xero_integration import get_xero_oauth2_session, get_invoices
+
+def xero_data_view(request):
+    # Check if we're receiving the callback from Xero with the authorization code
+    code = request.GET.get('code')
+    if code:
+        # Fetch the token with the authorization code
+        token = fetch_xero_token(code)
+        oauth_session = OAuth2Session(CLIENT_ID, token=token)
+    else:
+        # If no code is present, start the authorization flow
+        oauth_session = get_xero_oauth2_session()
+        authorization_url, state = oauth_session.authorization_url("https://login.xero.com/identity/connect/authorize")
+        return HttpResponseRedirect(authorization_url)
+
+    # Fetch the invoices
+    try:
+        invoices = get_invoices(oauth_session)
+    except Exception as e:
+        return HttpResponse(f"Error fetching invoices: {e}")
+
+    # Render the response
+    return render(request, 'xero_data.html', {'invoices': invoices})
 
 def testing_view(request):
     materials = Material.objects.all()

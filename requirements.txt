@@ -7,3 +7,5 @@ django-storages
 boto3
 gunicorn
 whitenoise
+requests
+requests-oauthlib
