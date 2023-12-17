@@ -9,6 +9,7 @@ from .views import update_material_rate
 from .views import delete_material_rate
 from .views import bom_view
 from .views import save_materials
+from .views import xero_data_view
 
 urlpatterns = [
     path('', views.main, name='main'),
@@ -24,5 +25,6 @@ urlpatterns = [
     path('bom/', bom_view, name='bom'),
     path('path-to-save-materials/', save_materials, name='save_materials'),
     path('update-bom-materials/', views.update_bom_materials, name='update_bom_materials'),
-    path('supplier/', supplier_view, name='supplier-form')
+    path('supplier/', supplier_view, name='supplier-form'),
+    path('xero-data/', xero_data_view, name='xero-data')
 ]
