@@ -9,6 +9,7 @@ from .forms import SupplierForm
 import json
 from django.urls import reverse
 from .xero_integration import fetch_xero_token
+from requests_oauthlib import OAuth2Session
 
 
 # Import your Xero integration functions
