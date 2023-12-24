@@ -140,7 +140,7 @@ def latest_invoice(request):
         xero_client = Xero(credentials)
 
         # Fetch the latest invoice
-        invoices = xero_client.invoices.all(order='Date DESC')
+        invoices = xero_client.invoices.all()
         latest_invoice = invoices[0] if invoices else None
 
         # Pass the latest invoice to the template
