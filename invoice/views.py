@@ -9,6 +9,7 @@ from xero.auth import OAuth2Credentials
 from xero.constants import XeroScopes
 from .models import Form
 import os
+from xero.exceptions import XeroException
 
 callback_uri = 'https://pods-app-git-4779450e3d53.herokuapp.com/latest_invoice'
 client_id = os.environ.get('CLIENT_ID')
