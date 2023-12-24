@@ -70,15 +70,29 @@ def form(request):
 
 
 def start_xero_auth_view(request):
-       # Get client_id, client_secret from config file or settings then
-       credentials = OAuth2Credentials(
-           client_id, client_secret, callback_uri=callback_uri,
-           scope=[XeroScopes.OFFLINE_ACCESS, XeroScopes.ACCOUNTING_CONTACTS,
-                  XeroScopes.ACCOUNTING_TRANSACTIONS]
-       )
-       authorization_url = credentials.generate_url()
-       cache.set('xero_creds', credentials.state)
-       return HttpResponseRedirect(authorization_url)
+    # Updated scopes as per the Xero API requirements
+    scopes = [
+        XeroScopes.OPENID,
+        XeroScopes.PROFILE,
+        XeroScopes.EMAIL,
+        XeroScopes.OFFLINE_ACCESS,
+        XeroScopes.ACCOUNTING_CONTACTS,
+        XeroScopes.ACCOUNTING_TRANSACTIONS,
+        XeroScopes.ACCOUNTING_ATTACHMENTS,
+        XeroScopes.ACCOUNTING_SETTINGS,
+        XeroScopes.ACCOUNTING_JOURNALS_READ,
+        XeroScopes.ACCOUNTING_REPORTS_READ,
+        XeroScopes.PROJECTS,
+        XeroScopes.ASSETS
+    ]
+
+    credentials = OAuth2Credentials(
+        client_id, client_secret, callback_uri=callback_uri,
+        scope=scopes
+    )
+    authorization_url = credentials.generate_url()
+    cache.set('xero_creds', credentials.state)
+    return HttpResponseRedirect(authorization_url)
 
 def process_callback_view(request):
        cred_state = cache.get('xero_creds')
@@ -87,6 +101,7 @@ def process_callback_view(request):
        credentials.verify(auth_secret)
        credentials.set_default_tenant()
        cache.set('xero_creds', credentials.state)
+       return redirect('latest_invoice')  # Redirect after successful auth
 
 def some_view_which_calls_xero(request):
        cred_state = cache.get('xero_creds')
