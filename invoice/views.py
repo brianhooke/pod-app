@@ -87,14 +87,25 @@ def start_xero_auth_view(request):
     ]
 
     credentials = OAuth2Credentials(
-        client_id, client_secret, callback_uri=callback_uri,
-        scope=scopes
+        client_id, client_secret, callback_uri=callback_uri, scope=scopes
     )
     authorization_url = credentials.generate_url()
+
+    # Store the entire state (including the generated 'state' parameter)
     cache.set('xero_creds', credentials.state)
+    # Also store just the 'state' parameter for later validation
+    cache.set('xero_oauth_state', credentials.state.get('state'))
+    
     return HttpResponseRedirect(authorization_url)
 
 def process_callback_view(request):
+       saved_state = cache.get('xero_oauth_state')
+       returned_state = request.GET.get('state')
+
+       if not saved_state or not returned_state or saved_state != returned_state:
+              # Handle the error - state mismatch
+              return render(request, 'error.html', {'error': 'State parameter mismatch'})
+
        cred_state = cache.get('xero_creds')
        credentials = OAuth2Credentials(**cred_state)
        auth_secret = request.get_raw_uri()
