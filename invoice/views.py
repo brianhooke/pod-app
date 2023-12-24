@@ -8,10 +8,11 @@ from xero import Xero
 from xero.auth import OAuth2Credentials
 from xero.constants import XeroScopes
 from .models import Form
+import os
 
-client_id = 'A87B79D4DBD74902B6CE91813AF3B179'
-client_secret = 'peagvqofmFjiYo1G1xP-0P4jJd8O2aZBZUlXsYBEHZC03i1W'
 callback_uri = 'https://pods-app-git-4779450e3d53.herokuapp.com/form'
+client_id = os.environ.get('CLIENT_ID')
+client_secret = os.environ.get('CLIENT_SECRET')
 
 # Create your views here.
 
