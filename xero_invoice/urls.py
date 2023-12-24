@@ -7,6 +7,7 @@ from invoice import views
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('form/',views.form,name='form'),
+    path('latest_invoice/',views.latest_invoice,name='latest_invoice'),
 	path('auth/',views.start_xero_auth_view, name ='auth'),
 	path('',views.login,name='login'),
 	path('xero/',views.some_view_which_calls_xero,name='xero'),

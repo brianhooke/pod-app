@@ -10,7 +10,7 @@ from xero.constants import XeroScopes
 from .models import Form
 import os
 
-callback_uri = 'https://pods-app-git-4779450e3d53.herokuapp.com/form'
+callback_uri = 'https://pods-app-git-4779450e3d53.herokuapp.com/latest_invoice'
 client_id = os.environ.get('CLIENT_ID')
 client_secret = os.environ.get('CLIENT_SECRET')
 
@@ -100,3 +100,27 @@ def some_view_which_calls_xero(request):
 def success(request):
     return render(request,'message.html')
 
+def latest_invoice(request):
+    try:
+        # Retrieve the Xero credentials from cache
+        cred_state = cache.get('xero_creds')
+        credentials = OAuth2Credentials(**cred_state)
+        
+        # Refresh credentials if expired
+        if credentials.expired():
+            credentials.refresh()
+            cache.set('xero_creds', credentials.state)
+
+        # Initialize Xero API client
+        xero_client = Xero(credentials)
+
+        # Fetch the latest invoice
+        invoices = xero_client.invoices.all(order='Date DESC')
+        latest_invoice = invoices[0] if invoices else None
+
+        # Pass the latest invoice to the template
+        return render(request, 'latest_invoice.html', {'invoice': latest_invoice})
+    
+    except XeroException as e:
+        # Handle any errors from the Xero API
+        return render(request, 'error.html', {'error': str(e)})
