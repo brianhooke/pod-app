@@ -105,6 +105,10 @@ def latest_invoice(request):
     try:
         # Retrieve the Xero credentials from cache
         cred_state = cache.get('xero_creds')
+        if not cred_state:
+            # Redirect to the login or start auth view if credentials are not in cache
+            return redirect('start_xero_auth_view')
+
         credentials = OAuth2Credentials(**cred_state)
         
         # Refresh credentials if expired
@@ -123,5 +127,8 @@ def latest_invoice(request):
         return render(request, 'latest_invoice.html', {'invoice': latest_invoice})
     
     except XeroException as e:
-        # Handle any errors from the Xero API
+        # Handle Xero API errors
         return render(request, 'error.html', {'error': str(e)})
+    except Exception as e:
+        # Handle any other errors
+        return render(request, 'error.html', {'error': 'An unexpected error occurred'})
