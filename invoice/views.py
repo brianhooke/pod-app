@@ -110,7 +110,12 @@ def latest_invoice(request):
             return redirect('start_xero_auth_view')
 
         credentials = OAuth2Credentials(**cred_state)
-        
+
+        # Check if token is valid and contains 'expires_at'
+        if not credentials.token or 'expires_at' not in credentials.token:
+            # Redirect to re-authenticate if token is invalid or incomplete
+            return redirect('start_xero_auth_view')
+
         # Refresh credentials if expired
         if credentials.expired():
             credentials.refresh()
@@ -125,7 +130,7 @@ def latest_invoice(request):
 
         # Pass the latest invoice to the template
         return render(request, 'latest_invoice.html', {'invoice': latest_invoice})
-    
+
     except XeroException as e:
         # Handle Xero API errors
         return render(request, 'error.html', {'error': str(e)})
