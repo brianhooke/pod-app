@@ -72,8 +72,6 @@ def form(request):
 
 def start_xero_auth_view(request):
     # Updated scopes as per the Xero API requirements
-    state = str(uuid.uuid4())  # Generate a unique state string
-
     scopes = [
         XeroScopes.OPENID,
         XeroScopes.PROFILE,
@@ -90,10 +88,13 @@ def start_xero_auth_view(request):
     ]
 
     credentials = OAuth2Credentials(
-        client_id, client_secret, callback_uri=callback_uri, scope=scopes, state=state
+        client_id, client_secret, callback_uri=callback_uri, scope=scopes
     )
     authorization_url = credentials.generate_url()
-    
+    # Generate a unique state string
+    state = str(uuid.uuid4())
+    # Append the state to the authorization URL manually
+    authorization_url += '&state=' + state
     # Store the entire state
     cache.set('xero_creds', credentials.state)
     
