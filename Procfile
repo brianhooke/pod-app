@@ -1,1 +1,1 @@
-web: gunicorn pod_app.wsgi --log-file -
+web: gunicorn xero_invoice.wsgi --log-file -
