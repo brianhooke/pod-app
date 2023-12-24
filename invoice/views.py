@@ -99,9 +99,9 @@ def start_xero_auth_view(request):
     cache.set('xero_creds', credentials.state)
     
     # Store and log the 'state' parameter
-    cache.set('xero_oauth_state', credentials.state.get('state'))
+    cache.set('xero_oauth_state', credentials.state)
     
-    print("Stored OAuth state:", credentials)  # Add logging
+    print("Stored OAuth state:", credentials.state)  # Add logging
 
     return HttpResponseRedirect(authorization_url)
 
