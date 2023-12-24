@@ -120,14 +120,14 @@ def latest_invoice(request):
     try:
         # Retrieve the Xero credentials from cache
         cred_state = cache.get('xero_creds')
-        if not cred_state:
-            # Redirect to the login or start auth view if credentials are not in cache
-            return redirect('start_xero_auth_view')
+        if not cred_state or not cred_state.get('token'):
+            # Redirect to the auth view if credentials are not in cache
+            return redirect('auth')
 
         credentials = OAuth2Credentials(**cred_state)
 
         # Check if token is valid and contains 'expires_at'
-        if not credentials.token or 'expires_at' not in credentials.token:
+        if 'expires_at' not in credentials.token:
             # Redirect to re-authenticate if token is invalid or incomplete
             return redirect('auth')
 
