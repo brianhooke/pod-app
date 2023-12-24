@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.core.cache import cache
 import xero
+import uuid
 
 from xero import Xero
 from xero.auth import OAuth2Credentials
@@ -71,6 +72,8 @@ def form(request):
 
 def start_xero_auth_view(request):
     # Updated scopes as per the Xero API requirements
+    state = str(uuid.uuid4())  # Generate a unique state string
+
     scopes = [
         XeroScopes.OPENID,
         XeroScopes.PROFILE,
@@ -87,7 +90,7 @@ def start_xero_auth_view(request):
     ]
 
     credentials = OAuth2Credentials(
-        client_id, client_secret, callback_uri=callback_uri, scope=scopes
+        client_id, client_secret, callback_uri=callback_uri, scope=scopes, state=state
     )
     authorization_url = credentials.generate_url()
     
@@ -95,9 +98,9 @@ def start_xero_auth_view(request):
     cache.set('xero_creds', credentials.state)
     
     # Store and log the 'state' parameter
-    oauth_state = credentials.state.get('state')
-    cache.set('xero_oauth_state', oauth_state)
-    print("Stored OAuth state:", oauth_state)  # Add logging
+    cache.set('xero_oauth_state', state)
+    
+    print("Stored OAuth state:", state)  # Add logging
 
     return HttpResponseRedirect(authorization_url)
 
