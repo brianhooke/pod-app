@@ -11,7 +11,7 @@ from .models import Form
 import os
 from xero.exceptions import XeroException
 
-callback_uri = 'https://pods-app-git-4779450e3d53.herokuapp.com/latest_invoice'
+callback_uri = 'https://pods-app-git-4779450e3d53.herokuapp.com/callback'
 client_id = os.environ.get('CLIENT_ID')
 client_secret = os.environ.get('CLIENT_SECRET')
 
