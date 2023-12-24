@@ -114,7 +114,7 @@ def latest_invoice(request):
         # Check if token is valid and contains 'expires_at'
         if not credentials.token or 'expires_at' not in credentials.token:
             # Redirect to re-authenticate if token is invalid or incomplete
-            return redirect('start_xero_auth_view')
+            return redirect('auth')
 
         # Refresh credentials if expired
         if credentials.expired():
