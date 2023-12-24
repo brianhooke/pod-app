@@ -92,16 +92,16 @@ def start_xero_auth_view(request):
     )
     authorization_url = credentials.generate_url()
     # Generate a unique state string
-    state = str(uuid.uuid4())
+#     state = str(uuid.uuid4())
     # Append the state to the authorization URL manually
-    authorization_url += '&state=' + state
+#     authorization_url += '&state=' + state
     # Store the entire state
     cache.set('xero_creds', credentials.state)
     
     # Store and log the 'state' parameter
-    cache.set('xero_oauth_state', state)
+    cache.set('xero_oauth_state', credentials.state.get('state'))
     
-    print("Stored OAuth state:", state)  # Add logging
+    print("Stored OAuth state:", credentials.state.get('state'))  # Add logging
 
     return HttpResponseRedirect(authorization_url)
 
